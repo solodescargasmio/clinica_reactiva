@@ -8,18 +8,24 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+
 public interface IcitasReactivaRepository extends ReactiveMongoRepository<citasDTOReactiva, String> {
     Flux<citasDTOReactiva> findByIdPaciente(String idPaciente);
 
      @Query("{'estadoReservaCita':'Cancelado'}")
     Flux<citasDTOReactiva> findByEstadoReservaCita();
 
-   /* @Query("{'fechaReservaCita':{$regex:'2021-12-30'}}")
-    Flux<citasDTOReactiva> findByfechaReservaCita(String fecha);*/
+    @Query("{'fechaReservaCita':?0}")
+    Flux<citasDTOReactiva> findByFechaReservaCita(LocalDate fecha);
+
+
+    @Query("{'fechaReservaCita':?0,'horaReservaCita':?1}")
+    Flux<citasDTOReactiva> findByFechaHoraReservaCita(LocalDate fecha,String hora);
 
 
     @Query("{'horaReservaCita':'10:00 am'}")
-    Flux<citasDTOReactiva> findByfechaReservaCita(String fecha);
+    Flux<citasDTOReactiva> findByhoraReservaCita(String hora);
 
     @Query(value = "{'id':?0}",fields = "{'nombreMedico':1,'apellidosMedico':1}")
     Mono<medicoDTO> findByMedico(String id);

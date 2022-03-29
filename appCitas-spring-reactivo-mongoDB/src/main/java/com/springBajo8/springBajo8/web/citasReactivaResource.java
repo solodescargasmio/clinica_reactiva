@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @RestController
 public class citasReactivaResource {
 
@@ -35,7 +38,6 @@ public class citasReactivaResource {
 
     @PutMapping("/citasReactivas/{id}")
     private Mono<ResponseEntity<citasDTOReactiva>> update(@PathVariable("id") String id, @RequestBody citasDTOReactiva citasDTOReactiva) {
-        System.out.println("/citasReactivas/{id}");
         return this.icitasReactivaService.update(id, citasDTOReactiva)
                 .flatMap(citasDTOReactiva1 -> Mono.just(ResponseEntity.ok(citasDTOReactiva1)))
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
@@ -43,7 +45,6 @@ public class citasReactivaResource {
     }
     @PutMapping("/citasReactivas/{id}/{}")
     private Mono<ResponseEntity<citasDTOReactiva>> updateCancelado(@PathVariable("id") String id, @RequestBody citasDTOReactiva citasDTOReactiva) {
-        System.out.println("/citasReactivas/{id}/{}");
         return this.icitasReactivaService.update(id, citasDTOReactiva)
                 .flatMap(citasDTOReactiva1 -> Mono.just(ResponseEntity.ok(citasDTOReactiva1)))
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
@@ -63,15 +64,31 @@ public class citasReactivaResource {
     private Flux<citasDTOReactiva> findCancelados() {
         return this.icitasReactivaService.findByEstadoReservaCita();
     }
+
+    @GetMapping("/citasReactivas/hora/{hora}")
+    private Flux<citasDTOReactiva> findHora(@PathVariable("hora") String hora) {
+        return this.icitasReactivaService.findByhoraReservaCita(hora);
+    }
+
+
     @GetMapping("/citasReactivas/fecha/{fecha}")
-    private Flux<citasDTOReactiva> findFechaHora(@PathVariable("fecha") String fecha) {
-        System.out.println("Dentro de Resource"+fecha);
+    private Flux<citasDTOReactiva> findFechaHora(@PathVariable("fecha") String fech) {
+        LocalDate fecha=LocalDate.parse(fech);
         return this.icitasReactivaService.findByFechaReservaCita(fecha);
     }
+
+    @GetMapping("/citasReactivas/fechahora/{fecha}/{hora}")
+    private Flux<citasDTOReactiva> findFechaHoraReserva(@PathVariable("fecha") String fech,@PathVariable("hora") String hora) {
+        LocalDate fecha=LocalDate.parse(fech);
+        return this.icitasReactivaService.findByFechaHoraReservaCita(fecha,hora);
+    }
+
+
     @GetMapping(value = "/citasReactivas/medico/{idPaciente}")
     private Mono<medicoDTO> findByMedico(@PathVariable("idPaciente") String idPaciente) {
         return this.icitasReactivaService.findByMedico(idPaciente);
     }
+
     @GetMapping(value = "/citasReactivas/tratamiento/{idPaciente}")
     private Mono<tratamientosDTO> findByTratamiento(@PathVariable("idPaciente") String idPaciente) {
         return this.icitasReactivaService.findByTratamiento(idPaciente);
