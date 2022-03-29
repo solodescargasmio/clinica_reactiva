@@ -24,7 +24,6 @@ public class citasReactivaResource {
     @PostMapping("/citasReactivas")
     @ResponseStatus(HttpStatus.CREATED)
     private Mono<citasDTOReactiva> save(@RequestBody citasDTOReactiva citasDTOReactiva) {
-        System.out.println(citasDTOReactiva.getTratamientos());
         return this.icitasReactivaService.save(citasDTOReactiva);
     }
 

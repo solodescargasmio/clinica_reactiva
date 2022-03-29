@@ -13,6 +13,7 @@ import java.time.LocalDate;
 public interface IcitasReactivaRepository extends ReactiveMongoRepository<citasDTOReactiva, String> {
     Flux<citasDTOReactiva> findByIdPaciente(String idPaciente);
 
+
      @Query("{'estadoReservaCita':'Cancelado'}")
     Flux<citasDTOReactiva> findByEstadoReservaCita();
 
@@ -32,9 +33,6 @@ public interface IcitasReactivaRepository extends ReactiveMongoRepository<citasD
 
     @Query(value = "{'id':?0}",fields = "{'tratamientos':1}")
     Mono<tratamientosDTO> findByTratamiento(String id);
-
-
-
 
 
 
