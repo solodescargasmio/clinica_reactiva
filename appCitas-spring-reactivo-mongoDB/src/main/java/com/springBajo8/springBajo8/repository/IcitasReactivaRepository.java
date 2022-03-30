@@ -3,6 +3,8 @@ package com.springBajo8.springBajo8.repository;
 import com.springBajo8.springBajo8.domain.citasDTOReactiva;
 import com.springBajo8.springBajo8.domain.medicoDTO;
 import com.springBajo8.springBajo8.domain.tratamientosDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;
@@ -11,8 +13,8 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 
 public interface IcitasReactivaRepository extends ReactiveMongoRepository<citasDTOReactiva, String> {
-    Flux<citasDTOReactiva> findByIdPaciente(String idPaciente);
 
+    Flux<citasDTOReactiva> findByIdPaciente(String idPaciente);
 
      @Query("{'estadoReservaCita':'Cancelado'}")
     Flux<citasDTOReactiva> findByEstadoReservaCita();

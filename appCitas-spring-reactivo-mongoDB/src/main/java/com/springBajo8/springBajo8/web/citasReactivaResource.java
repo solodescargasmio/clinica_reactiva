@@ -6,6 +6,10 @@ import com.springBajo8.springBajo8.domain.medicoDTO;
 import com.springBajo8.springBajo8.domain.tratamientosDTO;
 import com.springBajo8.springBajo8.service.IcitasReactivaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,13 +17,18 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import com.mongodb.client.MongoClient;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @RestController
 public class citasReactivaResource {
 
     @Autowired
     private IcitasReactivaService icitasReactivaService;
+
+    @Autowired
+    MongoTemplate mongoTemplate;
 
     @PostMapping("/citasReactivas")
     @ResponseStatus(HttpStatus.CREATED)
@@ -32,6 +41,20 @@ public class citasReactivaResource {
         return this.icitasReactivaService.delete(id)
                 .flatMap(citasDTOReactiva -> Mono.just(ResponseEntity.ok(citasDTOReactiva)))
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+
+    }
+
+    @PostMapping("/citasReactivas/cancelarcita/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    private String updateCancelar(@PathVariable("id") String id) {
+        System.out.println("Dentro del POST");
+        Query query=new Query(Criteria.where("id").is(id));
+        citasDTOReactiva cita=mongoTemplate.findOne(query,citasDTOReactiva.class);
+        cita.setEstadoReservaCita("Cita Cancelada");
+        mongoTemplate.save(cita);
+
+        //return cita.getEstadoReservaCita()+"  "+id;
+        return id;
 
     }
 
